@@ -15,6 +15,10 @@ public class ResultUtils {
         return new BaseResponse<>(0, data, "ok");
     }
 
+    public static <T> BaseResponse<T> error(String message) {
+        return new BaseResponse<>(ErrorCode.SYSTEM_ERROR.getCode(), null, message);
+    }
+
     /**
      * 失败
      *

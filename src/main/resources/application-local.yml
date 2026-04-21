@@ -1,0 +1,65 @@
+app:
+  crypto: garvey
+spring:
+  rabbitmq:
+    host: localhost       # RabbitMQ 服务地址（本地默认localhost）
+    port: 5672            # 通信端口（不是管理界面的15672）
+    username: guest       # 默认用户名
+    password: guest       # 默认密码
+    virtual-host: /       # 默认虚拟主机
+    # 连接池配置（可选，优化性能）
+    connection-timeout: 15000
+    cache:
+      channel:
+        size: 50          # 通道缓存大小
+#      connection:
+#        size: 10          # 连接缓存大小
+    # 生产端确认
+    publisher-confirm-type: simple
+    # 生产端返回（可选）
+    publisher-returns: true
+    # 消费端确认
+    listener:
+      simple:
+        acknowledge-mode: manual # 手动确认（推荐）
+        concurrency: 1 # 最小消费线程数
+        max-concurrency: 10 # 最大消费线程数
+    message-converter:
+      allowed-list-patterns:
+        - com.garvey.garveyaicode.model.entity.*
+        - java.util.*
+        - java.lang.*
+        - com.fasterxml.jackson.databind.*
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      connect-timeout: 10s
+      timeout: 10s
+      client-type: lettuce
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+        shutdown-timeout: 100ms
+  ai:
+    openai:
+      api-key: ${api_key}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7 # 可选：温度参数
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+
+

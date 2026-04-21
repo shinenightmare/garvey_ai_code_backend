@@ -12,6 +12,7 @@ import com.garvey.garveyaicode.common.response.ResultUtils;
 import com.garvey.garveyaicode.model.dto.*;
 import com.garvey.garveyaicode.model.vo.LoginUserVO;
 import com.garvey.garveyaicode.model.vo.UserVO;
+import com.garvey.garveyaicode.util.RedisUtil;
 import com.mybatisflex.core.paginate.Page;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,6 +38,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 保存用户。
@@ -231,4 +235,14 @@ public class UserController {
         return ResultUtils.success(userVOPage);
     }
 
+    @GetMapping("/user/{id}")
+    public BaseResponse<UserVO> getCacheUserById(@PathVariable("id") long id) {
+        String key = "user:" + id;
+        UserVO user = redisUtil.get(key, UserVO.class);
+        if (user == null) {
+            user = userService.getUserVO(userService.getById(id));
+        }
+        redisUtil.set(key, user, 60);
+        return ResultUtils.success(user);
+    }
 }
