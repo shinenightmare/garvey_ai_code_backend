@@ -12,7 +12,7 @@ pipeline {
             // 在这个阶段使用 Maven 容器
             agent {
                 docker {
-                    image 'maven:3.9.9-openjdk-17'
+                    image 'maven:3-openjdk-17'
                     args '-v /root/.m2:/root/.m2'  // 缓存 Maven 依赖
                 }
             }
